@@ -508,6 +508,18 @@ function createForkTaskToolMiddleware(
 }
 
 /**
+ * Builds an agent from `createAgent`'s parameters.
+ *
+ * `createAgent` by default. Another factory runs the same middleware on a
+ * different runtime and returns that runtime's agent.
+ *
+ * @experimental May change without notice.
+ */
+export type AgentFactory = (
+  params: CreateAgentParams<any, any, any, any>,
+) => ReactAgent<any>;
+
+/**
  * Create a runnable agent from a declarative `SubAgent` spec.
  *
  * This is the shared entrypoint for compiling a `SubAgent` into a
@@ -524,6 +536,8 @@ export function createSubAgent(
   spec: SubAgent,
   options?: {
     responseFormat?: CreateAgentParams["responseFormat"];
+    /** Builds the subagent; `createAgent` by default. @experimental */
+    agentFactory?: AgentFactory;
   },
 ): ReactAgent {
   if (!spec.model) {
@@ -547,7 +561,7 @@ export function createSubAgent(
 
   const selectedResponseFormat = options?.responseFormat ?? spec.responseFormat;
 
-  return createAgent({
+  return (options?.agentFactory ?? createAgent)({
     model: spec.model,
     systemPrompt: spec.systemPrompt,
     tools: spec.tools,
@@ -597,6 +611,7 @@ function getSubagents(options: {
   parentSystemPrompt?: string | SystemMessage | null;
   /** The exact tool instance forked subagents mirror — see `createTaskTool`. */
   mirroredTaskTool: StructuredTool;
+  agentFactory?: AgentFactory;
 }): {
   agents: Record<string, ReactAgent | Runnable>;
   specsByName: Record<string, SubAgent | CompiledSubAgent>;
@@ -613,6 +628,7 @@ function getSubagents(options: {
     generalPurposeAgent,
     parentSystemPrompt = null,
     mirroredTaskTool,
+    agentFactory,
   } = options;
 
   const defaultSubagentMiddleware = defaultMiddleware || [];
@@ -653,7 +669,7 @@ function getSubagents(options: {
       middleware: generalPurposeMiddleware,
     };
 
-    agents["general-purpose"] = createSubAgent(gpSpec);
+    agents["general-purpose"] = createSubAgent(gpSpec, { agentFactory });
     specsByName["general-purpose"] = gpSpec;
     subagentDescriptions.push(
       describeSubagentForTool(
@@ -737,7 +753,7 @@ function getSubagents(options: {
         middleware: subagentMiddleware,
         interruptOn: agentParams.interruptOn ?? defaultInterruptOn ?? undefined,
       };
-      agents[agentParams.name] = createSubAgent(resolvedSpec);
+      agents[agentParams.name] = createSubAgent(resolvedSpec, { agentFactory });
       specsByName[agentParams.name] = resolvedSpec;
       forkModeNames.add(agentParams.name);
     } else {
@@ -750,7 +766,7 @@ function getSubagents(options: {
         middleware: subagentMiddleware,
         interruptOn: agentParams.interruptOn ?? defaultInterruptOn ?? undefined,
       };
-      agents[agentParams.name] = createSubAgent(resolvedSpec);
+      agents[agentParams.name] = createSubAgent(resolvedSpec, { agentFactory });
       specsByName[agentParams.name] = resolvedSpec;
     }
   }
@@ -776,6 +792,7 @@ function createTaskTool(options: {
   generalPurposeAgent: boolean;
   taskDescription: string | null;
   parentSystemPrompt?: string | SystemMessage | null;
+  agentFactory?: AgentFactory;
 }) {
   const {
     defaultModel,
@@ -787,6 +804,7 @@ function createTaskTool(options: {
     generalPurposeAgent,
     taskDescription,
     parentSystemPrompt = null,
+    agentFactory,
   } = options;
 
   const subagentNames = [
@@ -840,7 +858,10 @@ function createTaskTool(options: {
       return subagentGraphs[subagentType] as Runnable;
     }
 
-    return createSubAgent(spec, { responseFormat }) as unknown as Runnable;
+    return createSubAgent(spec, {
+      responseFormat,
+      agentFactory,
+    }) as unknown as Runnable;
   }
 
   async function runTask(
@@ -970,6 +991,7 @@ function createTaskTool(options: {
     generalPurposeAgent,
     parentSystemPrompt,
     mirroredTaskTool,
+    agentFactory,
   });
 
   subagentGraphs = agents;
@@ -1006,6 +1028,13 @@ export interface SubAgentMiddlewareOptions {
   taskDescription?: string | null;
   /** Inherited by a `mode: "fork"` declarative or compiled subagent */
   parentSystemPrompt?: string | SystemMessage | null;
+  /**
+   * Builds declarative subagents from `createAgent`'s parameters;
+   * `createAgent` by default. `CompiledSubAgent` runnables are unaffected.
+   *
+   * @experimental May change without notice.
+   */
+  agentFactory?: AgentFactory;
 }
 
 /**
@@ -1023,6 +1052,7 @@ export function createSubAgentMiddleware(options: SubAgentMiddlewareOptions) {
     generalPurposeAgent = true,
     taskDescription = null,
     parentSystemPrompt = null,
+    agentFactory,
   } = options;
 
   const taskTool = createTaskTool({
@@ -1035,6 +1065,7 @@ export function createSubAgentMiddleware(options: SubAgentMiddlewareOptions) {
     generalPurposeAgent,
     taskDescription,
     parentSystemPrompt,
+    agentFactory,
   });
 
   return createMiddleware({

@@ -1,0 +1,91 @@
+{
+  "name": "deepagents-durable",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Experimental durable runtime for Deep Agents: the agent loop as durable tasks over a Rust kernel compiled to WebAssembly, for Node and Cloudflare Durable Objects.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build:wasm": "./crate/build.sh",
+    "build": "./crate/build.sh && tsdown",
+    "clean": "rm -rf dist/ .tsdown/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langchain-ai/deepagentsjs.git"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "langchain",
+    "durable",
+    "wasm",
+    "cloudflare"
+  ],
+  "author": "LangChain",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./agent": {
+      "types": "./dist/agent/index.d.ts",
+      "default": "./dist/agent/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./cloudflare": {
+      "types": "./dist/cloudflare.d.ts",
+      "default": "./dist/cloudflare.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*",
+    "wasm/durable_bg.wasm"
+  ],
+  "devDependencies": {
+    "@langchain/core": "^1.2.14",
+    "@langchain/langgraph": "^1.4.12",
+    "@langchain/langgraph-checkpoint": "^1.1.5",
+    "@tsconfig/recommended": "^1.0.13",
+    "@types/node": "^26.1.2",
+    "deepagents": "workspace:*",
+    "esbuild": "^0.28.2",
+    "langchain": "^1.5.10",
+    "miniflare": "^4.20260730.0",
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "@langchain/core": "^1.2.14",
+    "@langchain/langgraph": "^1.4.10",
+    "deepagents": "workspace:*",
+    "langchain": "^1.5.10"
+  },
+  "peerDependenciesMeta": {
+    "@langchain/core": {
+      "optional": true
+    },
+    "@langchain/langgraph": {
+      "optional": true
+    },
+    "deepagents": {
+      "optional": true
+    },
+    "langchain": {
+      "optional": true
+    }
+  }
+}

@@ -194,6 +194,7 @@ export function createDeepAgent<
     skills,
     permissions = [],
     streamTransformers = [],
+    agentFactory,
   } = params;
 
   const collidingTools = tools
@@ -480,6 +481,7 @@ export function createDeepAgent<
       subagents: inlineSubagents,
       generalPurposeAgent: false,
       parentSystemPrompt: finalSystemPrompt,
+      agentFactory,
     }),
     // Automatically summarizes conversation history when token limits are approached.
     // Uses createSummarizationMiddleware (deepagents version) with backend support
@@ -547,7 +549,7 @@ export function createDeepAgent<
     middleware.push(createUnsupportedContentMiddleware());
   }
 
-  const agent = createAgent({
+  const agent = (agentFactory ?? createAgent)({
     model,
     ...(finalSystemPrompt !== "" && { systemPrompt: finalSystemPrompt }),
     stateSchema,

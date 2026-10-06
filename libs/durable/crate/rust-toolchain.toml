@@ -1,0 +1,5 @@
+[toolchain]
+# Matches the kernel's toolchain (deepagents libs/durable).
+channel = "1.99.0"
+components = ["clippy", "rustfmt", "llvm-tools"]
+targets = ["wasm32-unknown-unknown"]
