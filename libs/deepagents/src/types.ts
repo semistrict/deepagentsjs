@@ -36,7 +36,7 @@ import type {
   StateDefinitionInit,
   StreamTransformer,
 } from "@langchain/langgraph";
-import type { CompiledSubAgent } from "./middleware/subagents.js";
+import type { AgentFactory, CompiledSubAgent } from "./middleware/subagents.js";
 import type {
   ASYNC_TASK_TOOL_NAMES,
   FILESYSTEM_TOOL_NAMES,
@@ -683,4 +683,12 @@ export interface CreateDeepAgentParams<
    * (tool calls), which land directly on the run, not under `run.extensions`.
    */
   streamTransformers?: TStreamTransformers;
+  /**
+   * Builds the agent and its declarative subagents from `createAgent`'s
+   * parameters. Defaults to `createAgent`; another factory runs the same
+   * middleware stack on a different runtime and returns that runtime's agent.
+   *
+   * @experimental May change without notice.
+   */
+  agentFactory?: AgentFactory;
 }

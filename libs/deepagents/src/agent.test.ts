@@ -2,7 +2,7 @@ import { afterEach, describe, it, expect, vi } from "vitest";
 import { createDeepAgent } from "./agent.js";
 import { isAnthropicModel } from "./utils.js";
 import { FakeListChatModel } from "@langchain/core/utils/testing";
-import { todoListMiddleware, tool } from "langchain";
+import { createAgent, todoListMiddleware, tool } from "langchain";
 import {
   AIMessage,
   HumanMessage,
@@ -543,5 +543,29 @@ describe("State schema propagation", () => {
     const channelNames = Object.keys(agent.graph?.channels ?? {});
     expect(channelNames).toContain("foo");
     assertAllDeepAgentQualities(agent);
+  });
+});
+
+describe("agentFactory", () => {
+  it("builds the agent and each declarative subagent", async () => {
+    const built: (string | undefined)[] = [];
+    const agent = createDeepAgent({
+      model: new FakeListChatModel({ responses: ["done"] }),
+      name: "main",
+      subagents: [
+        {
+          name: "researcher",
+          description: "Researches.",
+          systemPrompt: "Research.",
+        },
+      ],
+      agentFactory: (params) => {
+        built.push(params.name);
+        return createAgent(params);
+      },
+    });
+    expect(built).toEqual(["general-purpose", "researcher", "main"]);
+    const result = await agent.invoke({ messages: [new HumanMessage("hi")] });
+    expect(result.messages.at(-1)?.content).toBe("done");
   });
 });

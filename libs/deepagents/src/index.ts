@@ -107,6 +107,7 @@ export {
   type FilesystemMiddlewareOptions,
   type FsToolName,
   type SubAgentMiddlewareOptions,
+  type AgentFactory,
   type MemoryMiddlewareOptions,
   type SubAgent,
   type ForkedSubAgent,

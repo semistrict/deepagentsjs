@@ -11,6 +11,7 @@ export {
 export {
   createSubAgentMiddleware,
   type SubAgentMiddlewareOptions,
+  type AgentFactory,
   type SubAgent,
   type ForkedSubAgent,
   type CompiledSubAgent,
