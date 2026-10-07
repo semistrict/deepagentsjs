@@ -40,7 +40,7 @@ import {
   isGraphInterrupt,
 } from "@langchain/langgraph";
 import type { AgentMiddleware } from "langchain";
-import type { Step, Tx } from "../../wasm/durable.js";
+import type { Step, Tx } from "durable-wasm";
 import type { Kernel } from "../kernel.js";
 import type { TaskInvocation } from "../tasks.js";
 import { END as END_EVENT, EventBus, type Event } from "./events.js";

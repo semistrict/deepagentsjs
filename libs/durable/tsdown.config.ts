@@ -1,10 +1,9 @@
 import { defineConfig } from "tsdown";
 
-// Mark npm packages and the kernel's WebAssembly as external: the wasm/
-// directory ships beside dist/, where each host entry loads it its own way.
+// Mark npm packages as external, the kernel's (`durable-wasm`) among them:
+// each host entry loads its WebAssembly its own way.
 const external = (id: string) =>
-  id.endsWith(".wasm") ||
-  (!id.startsWith(".") && !id.startsWith("/") && !/^[A-Za-z]:[\\/]/.test(id));
+  !id.startsWith(".") && !id.startsWith("/") && !/^[A-Za-z]:[\\/]/.test(id);
 
 export default defineConfig({
   entry: [

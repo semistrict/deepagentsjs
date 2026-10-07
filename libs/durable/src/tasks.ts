@@ -16,7 +16,7 @@ import type {
   Task,
   TaskHandler,
   Tx,
-} from "../wasm/durable.js";
+} from "durable-wasm";
 
 /** A checkpoint: which phase runs next, and whatever that phase needs. */
 export interface Checkpoint {

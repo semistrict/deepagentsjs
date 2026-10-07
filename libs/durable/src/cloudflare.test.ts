@@ -1,5 +1,5 @@
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { builtinModules } from "node:module";
+import { builtinModules, createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,6 +8,7 @@ import { Miniflare } from "miniflare";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
+const kernelWasm = "durable-wasm/durable_bg.wasm";
 
 interface Fixture {
   /** The Worker's entry module in src/testing/. */
@@ -40,8 +41,6 @@ class TestWorker {
         write: false,
         // Node built-ins come from workerd's `nodejs_compat`, as Wrangler leaves them.
         external: ["*.wasm", "node:*", ...builtinModules],
-        // The bundle sits in src/, beside the wasm/ directory's relative import.
-        outdir: here,
         // CommonJS dependencies `require` Node built-ins, which ES modules reach through `createRequire`.
         banner: {
           js: 'import { createRequire } from "node:module"; const require = createRequire("/");',
@@ -51,11 +50,13 @@ class TestWorker {
     }
     this.#miniflare = new Miniflare({
       modules: [
-        { type: "ESModule", path: "src/worker.js", contents: this.#script },
+        { type: "ESModule", path: "worker.js", contents: this.#script },
         {
           type: "CompiledWasm",
-          path: "wasm/durable_bg.wasm",
-          contents: readFileSync(join(here, "..", "wasm", "durable_bg.wasm")),
+          path: kernelWasm,
+          contents: readFileSync(
+            createRequire(import.meta.url).resolve(kernelWasm),
+          ),
         },
       ],
       compatibilityDate: "2026-08-01",

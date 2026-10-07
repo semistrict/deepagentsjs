@@ -1,12 +1,7 @@
 /**
  * The durable session and the task scheduler that runs on it.
  */
-import {
-  Scheduler,
-  Session,
-  type OpenOptions,
-  type Tx,
-} from "../wasm/durable.js";
+import { Scheduler, Session, type OpenOptions, type Tx } from "durable-wasm";
 import { assertLoaded } from "./load.js";
 import { handler, synchronous, type TaskDefinition } from "./tasks.js";
 

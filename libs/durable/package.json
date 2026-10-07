@@ -8,8 +8,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build:wasm": "./crate/build.sh",
-    "build": "./crate/build.sh && tsdown",
+    "build": "tsdown",
     "clean": "rm -rf dist/ .tsdown/",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -50,9 +49,11 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist/**/*",
-    "wasm/durable_bg.wasm"
+    "dist/**/*"
   ],
+  "dependencies": {
+    "durable-wasm": "https://github.com/semistrict/deepagents/releases/download/durable-wasm-v0.1.0/durable-wasm-0.1.0.tgz"
+  },
   "devDependencies": {
     "@langchain/core": "^1.2.14",
     "@langchain/langgraph": "^1.4.12",

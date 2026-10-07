@@ -14,7 +14,7 @@ import {
   writeSync,
 } from "node:fs";
 import { dirname, resolve } from "node:path";
-import type { SessionFiles } from "../../wasm/durable.js";
+import type { SessionFiles } from "durable-wasm";
 
 /**
  * Files on disk, each held open from first use until the session closes.

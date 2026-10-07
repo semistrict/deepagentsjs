@@ -1,7 +1,7 @@
 /**
  * A session's SQLite files in memory, surviving the session that wrote them.
  */
-import type { SessionFiles } from "../../wasm/durable.js";
+import type { SessionFiles } from "durable-wasm";
 
 /**
  * Files kept in this object: closing a session and opening another on the

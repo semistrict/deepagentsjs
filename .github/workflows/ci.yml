@@ -92,16 +92,10 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      # deepagents-durable compiles its Rust kernel to WebAssembly; the Rust
-      # toolchain itself comes from libs/durable/crate/rust-toolchain.toml.
-      - name: Install wasm-pack
-        uses: taiki-e/install-action@f7e5d7c961414b23f5b25b2da9294395d08513ad # v2.87.26
-        with:
-          tool: wasm-pack
       - name: Build
         run: pnpm build
       - name: Create build archive
-        run: tar -czf build-artifacts.tar.gz libs/*/dist libs/durable/wasm libs/*/.turbo .turbo 2>/dev/null || tar -czf build-artifacts.tar.gz libs/*/dist libs/durable/wasm
+        run: tar -czf build-artifacts.tar.gz libs/*/dist libs/*/.turbo .turbo 2>/dev/null || tar -czf build-artifacts.tar.gz libs/*/dist
       - name: Publish to pkg.pr.new
         if: ${{ github.event_name == 'pull_request' }}
         run: pnpm dlx pkg-pr-new publish './libs/*' './libs/providers/*'

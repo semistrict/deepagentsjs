@@ -38,7 +38,7 @@ export {
   type TaskFilter,
   type TaskHandler,
   type TaskState,
-} from "../wasm/durable.js";
+} from "durable-wasm";
 export { isDurableError, type DurableErrorName } from "./errors.js";
 export { MemoryFiles } from "./files/memory.js";
 export { Kernel } from "./kernel.js";

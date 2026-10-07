@@ -704,6 +704,10 @@ importers:
         version: 5.0.0(@opentelemetry/api@1.9.1)(@types/node@26.1.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.1.4(@types/node@26.1.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
 
   libs/durable:
+    dependencies:
+      durable-wasm:
+        specifier: https://github.com/semistrict/deepagents/releases/download/durable-wasm-v0.1.0/durable-wasm-0.1.0.tgz
+        version: https://github.com/semistrict/deepagents/releases/download/durable-wasm-v0.1.0/durable-wasm-0.1.0.tgz
     devDependencies:
       '@langchain/core':
         specifier: ^1.2.14
@@ -3336,6 +3340,10 @@ packages:
     peerDependenciesMeta:
       oxc-resolver:
         optional: true
+
+  durable-wasm@https://github.com/semistrict/deepagents/releases/download/durable-wasm-v0.1.0/durable-wasm-0.1.0.tgz:
+    resolution: {integrity: sha512-r+xKwHz8s/iULGcB6Rxb+tjJ4xynY93etoy/eWn6x1eqH8cNNepGVIn+uZA/T0tB8IOnTBVTWdPkRXnGTneeJQ==, tarball: https://github.com/semistrict/deepagents/releases/download/durable-wasm-v0.1.0/durable-wasm-0.1.0.tgz}
+    version: 0.1.0
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -6573,6 +6581,8 @@ snapshots:
   dotenv@18.0.4: {}
 
   dts-resolver@3.0.0: {}
+
+  durable-wasm@https://github.com/semistrict/deepagents/releases/download/durable-wasm-v0.1.0/durable-wasm-0.1.0.tgz: {}
 
   emoji-regex@8.0.0: {}
 

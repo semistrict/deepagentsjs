@@ -1,7 +1,7 @@
 /**
  * A session's SQLite files in a Cloudflare Durable Object's storage.
  */
-import type { SessionFiles } from "../../wasm/durable.js";
+import type { SessionFiles } from "durable-wasm";
 
 /** The part of a Durable Object's `ctx.storage.sql` the files use. */
 export interface SqlStorage {

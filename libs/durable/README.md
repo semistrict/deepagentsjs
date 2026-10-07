@@ -5,27 +5,28 @@ graph execution and checkpointer, on Node and in Cloudflare Durable Objects.
 
 The kernel is the Rust crate `durable-core` from
 [deepagents](https://github.com/semistrict/deepagents/tree/semistrict/sdk/durable-runtime/libs/durable),
-pulled in as a git dependency and compiled to WebAssembly. It stores
+whose `crates/wasm` compiles it to WebAssembly and binds it with
+`wasm-bindgen`. That build ships as the `durable-wasm` package, a release
+asset of deepagents this package depends on by URL. It stores
 conversations, immutable entries, durable tasks, submissions, and JSON
 documents in a SQLite file in pi-durable's format, and schedules tasks on the
 host's event loop. The agent loop runs as durable tasks on it: a crash repeats
 at most the step in flight, and a run stopped for human input resumes by
 running only the step that asked.
 
-## Layout
+In the kernel SQLite runs inline, so reads and commits are synchronous calls;
+only waiting for the mutation line, for a task or a submission, and for frames
+return promises. SQLite's files are kept by the host through `SessionFiles`.
 
-- `crate/`: the WebAssembly bindings (`wasm-bindgen`). SQLite runs inline, so
-  reads and commits are synchronous calls; only waiting for the mutation line,
-  for a task or a submission, and for frames return promises. SQLite's files
-  are kept by the host through `SessionFiles`.
-- `src/`: the TypeScript package.
-  - `deepagents-durable/node`: the kernel, loaded from its file, and
-    `NodeFiles` for sessions on disk.
-  - `deepagents-durable/cloudflare`: the kernel, imported as a WebAssembly
-    module, and `DurableObjectFiles` for sessions in a Durable Object's storage.
-  - `deepagents-durable/agent`: `createAgent` and `createDeepAgent`, whose
-    loops run on the kernel. Middleware, tools, and models written for
-    `langchain`'s `createAgent` run unchanged.
+## Entry points
+
+- `deepagents-durable/node`: the kernel, loaded from its file, and `NodeFiles`
+  for sessions on disk.
+- `deepagents-durable/cloudflare`: the kernel, imported as a WebAssembly
+  module, and `DurableObjectFiles` for sessions in a Durable Object's storage.
+- `deepagents-durable/agent`: `createAgent` and `createDeepAgent`, whose loops
+  run on the kernel. Middleware, tools, and models written for `langchain`'s
+  `createAgent` run unchanged.
 
 ## Use
 
@@ -51,9 +52,10 @@ const kernel = await Kernel.open({ path: "agent.sqlite", files: new DurableObjec
 `agentFactory(kernel)` from `deepagents-durable/agent` runs any agent it
 assembles, and its declarative subagents, on the kernel.
 
-## Build
+## Kernel changes
 
-`pnpm build` compiles the kernel (`crate/build.sh`, needing `wasm-pack` and a
-clang that targets wasm32) and then the package. Set `DURABLE_CORE_PATH` to a
-local `libs/durable/crates/core` to build against a checkout of the kernel
-instead of the pinned revision.
+The kernel is built in deepagents: `make wasm` in `libs/durable` writes the
+package and its tarball to `crates/wasm/pkg`. To try a local build, point the
+`durable-wasm` dependency at that tarball (`file:`). To ship one, bump
+`crates/wasm`'s version and push a `durable-wasm-v<version>` tag; CI publishes
+the tarball as that release's asset, and the dependency here moves to its URL.

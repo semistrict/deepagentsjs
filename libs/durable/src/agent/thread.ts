@@ -18,7 +18,7 @@ import {
   coerceMessageLikeToMessage,
 } from "@langchain/core/messages";
 import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
-import type { Scope, Session, StoredEntry, Tx } from "../../wasm/durable.js";
+import type { Scope, Session, StoredEntry, Tx } from "durable-wasm";
 import { dump, dumpMessage, load, loadMessage } from "./serde.js";
 import { MESSAGES, type Schema } from "./schema.js";
 

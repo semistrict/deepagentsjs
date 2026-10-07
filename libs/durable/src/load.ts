@@ -2,7 +2,7 @@
  * Instantiating the kernel's WebAssembly. Each host entry point loads it the
  * way its platform delivers modules: Node reads the file, a Worker imports it.
  */
-import { initSync } from "../wasm/durable.js";
+import { initSync } from "durable-wasm";
 
 let loaded = false;
 
